@@ -6,7 +6,6 @@
  * column until a player gets four-in-a-row (horiz, vert, or diag) or until
  * board fills (tie)
  */
-
 const WIDTH = 7;
 const HEIGHT = 6;
 
@@ -82,24 +81,39 @@ function handleClick(evt) {
   // switch players
   currPlayer = (currPlayer === 1) ? 2 : 1;
 }
+
 /* Called by handleClick() Places game piece in the DOM. */
 function placeGamePiece(row, col) {
   // Updates data structure based on user input
-  // calls updateBoard
+  board[row][col] = currPlayer;
 
   // place piece in board and add to HTML table
-  // TODO: add line to update in-memory board
   placeInTable(row, col);
 }
+
 /** placeInTable: update DOM to place piece into HTML table of board */
 function placeInTable(y, x) {
   // TODO: make a div and insert into correct table cell
+  let gamePiece = document.createElement('div');
+  let pieceColor = (currPlayer === 1) ? "red" : "blue";
+  gamePiece.classList.add("piece", pieceColor);
+
+  let cell = document.getElementById(`${y}-${x}`);
+  cell.append(gamePiece);
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
-function findSpotForCol(x) {
+function findSpotForCol(col) {
   // checks if column is not filled, return the next row index, else null
   // TODO: this whole function
+
+  for (let i = HEIGHT - 1; i > -1; i--) {
+    if (board[i][col] === null) {
+      return i;
+    }
+  }
+
+  return null;
 }
 
 /* Called by handleClick(). Calls checkForWin & checkForTie. */
@@ -165,5 +179,8 @@ function endGame(msg) {
   // TODO: pop up alert message
   alert(msg);
   // Set header to game msg?
+
+  // Remove event listener for the clicks
+
 }
 gameStart();
