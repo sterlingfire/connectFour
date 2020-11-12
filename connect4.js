@@ -41,9 +41,9 @@ function makeHtmlBoard() {
   top.addEventListener("click", handleClick);
 
   // Sets each headCell id equal to column index
-  for (let col = 0; col < WIDTH; col++) {
+  for (let x = 0; x < WIDTH; x++) {
     let headCell = document.createElement("td");
-    headCell.setAttribute("id", col);
+    headCell.setAttribute("id", x);
     top.append(headCell);
   }
   htmlBoard.append(top);
@@ -67,14 +67,14 @@ function makeHtmlBoard() {
 /** handleClick: handle click of column top to play piece */
 function handleClick(evt) {
   // get x from ID of clicked cell
-  let col = +evt.target.id;
+  let x = +evt.target.id;
   // get next spot in column (if none, ignore click)
-  let row = findSpotForCol(col);
-  if (row === null) {
+  let y = findSpotForCol(x);
+  if (y === null) {
     return;
   }
   // We already know the move is valid by here, so Place game piece.
-  placeGamePiece(row, col);
+  placeGamePiece(y, x);
   // Checks whether there has been a win or a tie
   evaluateGame();
 
@@ -83,17 +83,16 @@ function handleClick(evt) {
 }
 
 /* Called by handleClick() Places game piece in the DOM. */
-function placeGamePiece(row, col) {
+function placeGamePiece(y, x) {
   // Updates data structure based on user input
-  board[row][col] = currPlayer;
+  board[y][x] = currPlayer;
 
   // place piece in board and add to HTML table
-  placeInTable(row, col);
+  placeInTable(y, x);
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
   let gamePiece = document.createElement('div');
   let pieceColor = (currPlayer === 1) ? "red" : "blue";
   gamePiece.classList.add("piece", pieceColor);
@@ -103,16 +102,13 @@ function placeInTable(y, x) {
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
-function findSpotForCol(col) {
+function findSpotForCol(x) {
   // checks if column is not filled, return the next row index, else null
-  // TODO: this whole function
-
-  for (let i = HEIGHT - 1; i > -1; i--) {
-    if (board[i][col] === null) {
-      return i;
+  for (let y = HEIGHT - 1; y > -1; y--) {
+    if (board[y][x] === null) {
+      return y;
     }
   }
-
   return null;
 }
 
@@ -139,26 +135,28 @@ function checkForWin() {
    * currPlayer
    */
   function _win(cells) {
-
-    //TODO: Check four cells to see if they're all legal & all color of current
-    //player
-
+    for (let [y, x] of cells) {
+      // check if the indexes are out of bounds, if so fail early.
+      if (y < 0 || x < 0 || y >= HEIGHT || x >= WIDTH) return false;
+      // fail early if that location is empty, or has the other players piece.
+      if (board[y][x] === null || board[y][x] !== currPlayer) {
+        return false;
+      }
+    }
+    return true;
   }
-
   // using HEIGHT and WIDTH, generate "check list" of coordinates
   // for 4 cells (starting here) for each of the different
   // ways to win: horizontal, vertical, diagonalDR, diagonalDL
   for (let y = 0; y < HEIGHT; y++) {
     for (let x = 0; x < WIDTH; x++) {
-      // TODO: assign values to the below variables for each of the ways to win
-      // horizontal has been assigned for you
       // each should be an array of 4 cell coordinates:
       // [ [y, x], [y, x], [y, x], [y, x] ]
 
       let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
-      let vert;
-      let diagDL;
-      let diagDR;
+      let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
+      let diagDL = [[y, x], [y + 1, x - 1], [y + 2, x - 2], [y + 3, x - 3]];
+      let diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
 
       // find winner (only checking each win-possibility as needed)
       if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
@@ -166,21 +164,23 @@ function checkForWin() {
       }
     }
   }
+  return false;
 }
 
 /* Called by evaluateGame() at the end of each players turn.
 Checks to see if there are . */
 function checkForTie() {
-  //
+  for (let row of board) {
+    if (row.some(cell => cell === null)) return false;
+  }
+  return true;
 }
 
 /** endGame: announce game end */
 function endGame(msg) {
-  // TODO: pop up alert message
+  // Set header to game msg
+  document.getElementsByTagName("h1")[0].innerText = `${msg}`;
   alert(msg);
-  // Set header to game msg?
-
-  // Remove event listener for the clicks
-
 }
+
 gameStart();
