@@ -10,10 +10,10 @@ const WIDTH = 7;
 const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
-let board = []; // array of rows, each row is array of cells  (board[y][x])
-
+let board; // array of rows, each row is array of cells  (board[y][x])
 
 /* Clears the game board and sets up the game. */
+// feedback: function name verb + noun
 function gameStart() {
   makeBoard();
   makeHtmlBoard();
@@ -23,6 +23,8 @@ function gameStart() {
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
 function makeBoard() {
+  board = [];
+  
   // set "board" to empty HEIGHT x WIDTH matrix array
   for (let i = 0; i < HEIGHT; i++) {
     let column = new Array(WIDTH);
@@ -73,8 +75,13 @@ function handleClick(evt) {
   if (y === null) {
     return;
   }
-  // We already know the move is valid by here, so Place game piece.
-  placeGamePiece(y, x);
+
+  // Updates data structure based on user input
+  board[y][x] = currPlayer;
+  
+  // place piece in board and add to HTML table
+  placeInTable(y, x);
+
   // Checks whether there has been a win or a tie
   evaluateGame();
 
@@ -84,11 +91,7 @@ function handleClick(evt) {
 
 /* Called by handleClick() Places game piece in the DOM. */
 function placeGamePiece(y, x) {
-  // Updates data structure based on user input
-  board[y][x] = currPlayer;
-
-  // place piece in board and add to HTML table
-  placeInTable(y, x);
+  
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -137,7 +140,10 @@ function checkForWin() {
   function _win(cells) {
     for (let [y, x] of cells) {
       // check if the indexes are out of bounds, if so fail early.
-      if (y < 0 || x < 0 || y >= HEIGHT || x >= WIDTH) return false;
+      if (y < 0 || x < 0 || y >= HEIGHT || x >= WIDTH) {
+        return false
+      }
+
       // fail early if that location is empty, or has the other players piece.
       if (board[y][x] === null || board[y][x] !== currPlayer) {
         return false;
@@ -179,6 +185,7 @@ function checkForTie() {
 /** endGame: announce game end */
 function endGame(msg) {
   // Set header to game msg
+  // feedback: querySelector
   document.getElementsByTagName("h1")[0].innerText = `${msg}`;
   alert(msg);
 }
