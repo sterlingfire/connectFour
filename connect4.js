@@ -7,18 +7,31 @@
  * board fills (tie)
  */
 
-var WIDTH = 7;
-var HEIGHT = 6;
+const WIDTH = 7;
+const HEIGHT = 6;
 
-var currPlayer = 1; // active player: 1 or 2
-var board = []; // array of rows, each row is array of cells  (board[y][x])
+let currPlayer = 1; // active player: 1 or 2
+let board = new Array(WIDTH); // array of rows, each row is array of cells  (board[y][x])
+
+// tells us the next row location of the game piece for each column
+const nextMoveIndex = new Array(WIDTH).fill(0); 
+
+/* Clears the game board and sets up the game. */
+function gameStart() {
+  makeBoard();
+  makeHtmlBoard();
+}
+
 
 /** makeBoard: create in-JS board structure:
  *    board = array of rows, each row is array of cells  (board[y][x])
  */
 
 function makeBoard() {
-  // TODO: set "board" to empty HEIGHT x WIDTH matrix array
+  // set "board" to empty HEIGHT x WIDTH matrix array
+  let column = new Array(HEIGHT);
+  column.fill(null);
+  board.fill(column);
 }
 
 /** makeHtmlBoard: make HTML table and row of column tops. */
@@ -62,8 +75,8 @@ function makeHtmlBoard() {
 /** findSpotForCol: given column x, return top empty y (null if filled) */
 
 function findSpotForCol(x) {
-  // TODO: write the real version of this, rather than always returning 0
-  return 0;
+  // checks if column is not filled, return the next row index, else null
+  return (nextMoveIndex[x] < HEIGHT) ? nextMoveIndex[x]++ : null;
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -82,28 +95,31 @@ function endGame(msg) {
 
 function handleClick(evt) {
   // get x from ID of clicked cell
-  var x = +evt.target.id;
+  let col = +evt.target.id;
 
   // get next spot in column (if none, ignore click)
-  var y = findSpotForCol(x);
-  if (y === null) {
+  let row = findSpotForCol(col);
+  if (row === null) {
     return;
   }
 
   // place piece in board and add to HTML table
   // TODO: add line to update in-memory board
-  placeInTable(y, x);
+  placeInTable(row, col);
 
-  // check for win
-  if (checkForWin()) {
-    return endGame(`Player ${currPlayer} won!`);
-  }
+  placeGamePiece();
 
-  // check for tie
-  // TODO: check if all cells in board are filled; if so call, call endGame
+  updateBoard();
+
+
+
+
+
+  // Checks whether there has been a win or a tie
+  evaluateGame();
 
   // switch players
-  // TODO: switch currPlayer 1 <-> 2
+  currPlayer = (currPlayer === 1) ? 2 : 1;
 }
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -124,8 +140,8 @@ function checkForWin() {
   // using HEIGHT and WIDTH, generate "check list" of coordinates
   // for 4 cells (starting here) for each of the different
   // ways to win: horizontal, vertical, diagonalDR, diagonalDL
-  for (var y = 0; y < HEIGHT; y++) {
-    for (var x = 0; x < WIDTH; x++) {
+  for (let y = 0; y < HEIGHT; y++) {
+    for (let x = 0; x < WIDTH; x++) {
       // TODO: assign values to the below variables for each of the ways to win
       // horizontal has been assigned for you
       // each should be an array of 4 cell coordinates:
@@ -144,5 +160,67 @@ function checkForWin() {
   }
 }
 
-makeBoard();
-makeHtmlBoard();
+
+/* Called by evaluateGame() at the end of each players turn.
+Checks to see if there are . */
+function checkForTie() {
+  //
+}
+
+
+/* Called by handleClick(). Calls checkForWin & checkForTie. */
+function evaluateGame() {
+
+  // check for win
+  if (checkForWin()) {
+    return endGame(`Player ${currPlayer} won!`);
+  }
+
+  // check for tie
+  // TODO: check if all cells in board are filled; if so call, call endGame
+  if (checkForTie()) {
+    return endGame('Both players have tied!');
+  }
+}
+
+
+gameStart();
+
+
+
+
+/* Called by column event listner. Calls placeGamePiece(), evaluateGame() */
+function handleClick() {
+
+}
+
+/* Called by handleClick() Places game piece in the DOM. */
+function placeGamePiece() {
+  // Updates data structure based on user input
+  // calls updateBoard
+}
+
+/* Called by placeGamePiece: Helper function to update DOM each turn */
+function updateBoard() {
+
+}
+
+
+
+/* Called by evaluateGame() at the end of each players turn.
+Checks to see if they have won the game. */
+function checkForWin() {
+  //
+}
+
+
+/* Called by checkForWin when the game has been won.
+Displays win message. */
+function displayWinMessage() {
+
+}
+/* Called by checkForWin when there are no more valid moves.
+Displays tie message. */
+function displayTieMessage() {
+
+}

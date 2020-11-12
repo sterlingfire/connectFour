@@ -3,9 +3,11 @@
 
 // what HTML would be useful for the game board itself?
 //{/* <table></table> */}
+
 {/* how could you represent a played-piece in the HTML board? */ }
 // Add a [blue||red] circle to the middle of the table cell
 //border - radius: 50px; // adjust value?
+
 {/* in the JavaScript, what would be a good structure for the in-memory game board? */ }
 sample_data_structure =
   [["red", "blue", null, null, null, null,],
@@ -17,6 +19,7 @@ sample_data_structure =
   [1, 2, 3, 4, 5, 6]]
 currentStackIndex = [1,0,0,4,0,0,0];
 nextMoveIndex = [1,1,1,1,1,1,1];
+
 {/* what might the flow of the game be? */ }
 // Game starts blank
 
@@ -67,6 +70,7 @@ Displays tie message. */
 function displayTieMessage() {
 
 }
+
 // Player1's turn
   // Player clicks a column (or presses 1-7? stretch goal)
   // piece is placed
