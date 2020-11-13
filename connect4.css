@@ -22,11 +22,23 @@ body {
 /* pieces are div within game table cells: draw as colored circles */
 
 .piece {
-  /* TODO: make into circles */
+  position: relative;
+  animation-duration: 0.5s;
+  animation-name: drop;
   margin: 5px;
-  width: 80%;
-  height: 80%;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  bottom: 0px;
+}
+@keyframes drop {
+  from {
+    bottom: 400px;
+  }
+
+  to {
+    bottom: 0;
+  }
 }
 
 /* TODO: make pieces red/blue,  depending on player 1/2 piece */

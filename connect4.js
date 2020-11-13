@@ -11,7 +11,7 @@ const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
 let board; // array of rows, each row is array of cells  (board[y][x])
-
+let gameIsOver=false;
 /* Clears the game board and sets up the game. */
 // feedback: function name verb + noun
 function gameStart() {
@@ -24,7 +24,7 @@ function gameStart() {
  */
 function makeBoard() {
   board = [];
-  
+
   // set "board" to empty HEIGHT x WIDTH matrix array
   for (let i = 0; i < HEIGHT; i++) {
     let column = new Array(WIDTH);
@@ -41,6 +41,8 @@ function makeHtmlBoard() {
   let top = document.createElement("tr");
   top.setAttribute("id", "column-top");
   top.addEventListener("click", handleClick);
+
+
 
   // Sets each headCell id equal to column index
   for (let x = 0; x < WIDTH; x++) {
@@ -72,13 +74,13 @@ function handleClick(evt) {
   let x = +evt.target.id;
   // get next spot in column (if none, ignore click)
   let y = findSpotForCol(x);
-  if (y === null) {
+  if (y === null || gameIsOver) {
     return;
   }
 
   // Updates data structure based on user input
   board[y][x] = currPlayer;
-  
+
   // place piece in board and add to HTML table
   placeInTable(y, x);
 
@@ -91,7 +93,7 @@ function handleClick(evt) {
 
 /* Called by handleClick() Places game piece in the DOM. */
 function placeGamePiece(y, x) {
-  
+
 }
 
 /** placeInTable: update DOM to place piece into HTML table of board */
@@ -187,7 +189,9 @@ function endGame(msg) {
   // Set header to game msg
   // feedback: querySelector
   document.getElementsByTagName("h1")[0].innerText = `${msg}`;
-  alert(msg);
+  gameIsOver = true;
+  setTimeout(function () { alert(msg); }, 1000);
 }
+
 
 gameStart();
